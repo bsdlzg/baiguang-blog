@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bsdlzg.blog.mapper.ImMessageMapper">
+
+
+    <select id="selectPublicHistoryList" resultType="com.bsdlzg.blog.vo.ImMessageVO">
+        SELECT ui.avatar as fromUserAvatar, ui.nickname as fromUserNickname,im.*
+        FROM b_im_message im
+                 left join b_user u on im.from_user_id = u.id
+                 left join b_user_info ui on u.user_info_id = ui.id
+        where im.to_user_id is null
+        order by im.create_time desc
+    </select>
+    <select id="selectPublicOnlineUserList" resultType="com.bsdlzg.blog.vo.ImOnlineUserVO">
+        SELECT ui.avatar as avatar, ui.nickname,u.id
+        FROM  b_user u left join b_user_info ui on u.user_info_id = ui.id
+        where u.id in
+        <foreach collection="keys"  item="userId" separator="," open="(" close=")">
+        #{userId}
+        </foreach>
+    </select>
+    <select id="selectPublicUserImHistoryList" resultType="com.bsdlzg.blog.vo.ImMessageVO">
+        SELECT ui.avatar as fromUserAvatar, ui.nickname as fromUserNickname, im.*
+        FROM b_im_message im
+                 left join b_user u on im.from_user_id = u.id
+                 left join b_user_info ui on u.user_info_id = ui.id
+        where (im.to_user_id = #{fromUserId} OR im.from_user_id = #{fromUserId})
+          and (im.to_user_id = #{toUserId} OR im.from_user_id = #{toUserId})
+        order by im.create_time desc
+    </select>
+</mapper>

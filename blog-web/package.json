@@ -1,0 +1,59 @@
+{
+  "name": "blog-web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "vue-cli-service serve --open",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint"
+  },
+  "dependencies": {
+    "@kangc/v-md-editor": "^1.7.11",
+    "animate.css": "^3.7.2",
+    "axios": "^1.3.6",
+    "clipboard": "^2.0.11",
+    "core-js": "^3.8.3",
+    "element-ui": "^2.15.13",
+    "js-cookie": "^3.0.5",
+    "node-polyfill-webpack-plugin": "^2.0.1",
+    "prismjs": "^1.24.0",
+    "svg-sprite-loader": "^6.0.11",
+    "vue": "^2.6.14",
+    "vue-baberrage": "^3.2.4",
+    "vue-image-swipe": "^1.0.5",
+    "vue-router": "^3.6.5",
+    "vuex": "^3.6.2",
+    "wowjs": "^1.1.3"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.12.16",
+    "@babel/eslint-parser": "^7.12.16",
+    "@vue/cli-plugin-babel": "~5.0.0",
+    "@vue/cli-plugin-eslint": "~5.0.0",
+    "@vue/cli-service": "~5.0.0",
+    "eslint": "^7.32.0",
+    "eslint-plugin-vue": "^8.0.3",
+    "node-sass": "7.0.0",
+    "sass-loader": "13.2.2",
+    "vue-template-compiler": "^2.6.14"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/essential",
+      "eslint:recommended"
+    ],
+    "parserOptions": {
+      "parser": "@babel/eslint-parser"
+    },
+    "rules": {}
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
+}

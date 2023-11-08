@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bsdlzg.blog.mapper.CategoryMapper">
+    <select id="countArticle" resultType="com.bsdlzg.blog.vo.SystemCategoryCountVO">
+        select a.name, count(b.id) as value
+        from b_category a left join b_article b
+        on a.id=b.category_id
+        GROUP BY a.id
+    </select>
+
+    <select id="selectCategory" resultType="com.bsdlzg.blog.vo.SystemCategoryListVO">
+        select a.id,a.name,a.sort,a.create_time,a.click_volume,a.avatar,a.boutique,b.articleCount from b_category a
+        left join (select category_id,count(id) as articleCount from b_article group by category_id) b on
+        a.id=b.category_id
+        <where>
+            <if test="name != null">
+                a.name like concat('%',#{name},'%')
+            </if>
+        </where>
+    </select>
+
+
+    <select id="selectApitCategoryList" resultType="com.bsdlzg.blog.vo.ApiCategoryListVO">
+        select b.id, b.name, b.avatar, count(a.id) as articleCount
+        from b_category b
+                 left join b_article a on a.category_id = b.id
+        group by b.id order by b.sort desc
+    </select>
+
+</mapper>

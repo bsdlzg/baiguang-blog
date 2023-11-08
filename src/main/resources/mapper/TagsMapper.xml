@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bsdlzg.blog.mapper.TagsMapper">
+
+    <delete id="deleteByArticleIds">
+        DELETE FROM b_article_tag WHERE article_id in
+            <foreach collection="ids" item="id" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+    </delete>
+
+    <select id="selectByArticleId" resultType="java.lang.String">
+        select name from b_tags where id in(select tag_id from b_article_tag where article_id=#{articleId})
+    </select>
+
+
+    <select id="selectPageRecord" resultType="com.bsdlzg.blog.vo.SystemTagListVo">
+        select a.id,a.name,a.sort,a.click_volume,a.create_time,a.avatar,b.articleCount from b_tags a
+            left join (select tag_id,count(id) as articleCount from b_article_tag GROUP BY tag_id) b on a.id=b.tag_id
+        <where>
+            <if test="name != null">
+                a.name like concat('%',#{name},'%')
+            </if>
+        </where>
+    </select>
+
+    <insert id="saveArticleTags">
+        insert ignore into  b_article_tag(article_id,tag_id) values
+        <foreach collection="tags" item="tagsId" index="index" separator=",">
+            ( #{articleId},#{tagsId})
+        </foreach>
+    </insert>
+
+    <select id="countTags" resultType="java.util.Map">
+        select id,name from b_tags
+    </select>
+
+    <select id="selectTagByArticleId" resultType="com.bsdlzg.blog.entity.Tags">
+        select * from b_tags where id in (select tag_id from b_article_tag where article_id=#{articleId})
+    </select>
+
+    <select id="selectListCountArticle" resultType="com.bsdlzg.blog.vo.ApiTagVO">
+        select t.id, t.name, count(at.article_id) as articleCount,t.avatar
+        from b_tags t
+                 left join b_article_tag at
+        on t.id = at.tag_id
+        group by t.id order by t.sort desc
+    </select>
+
+</mapper>

@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bsdlzg.blog.mapper.ArticleMapper">
+
+    <resultMap id="selectArticleByIdToVOMap" type="com.bsdlzg.blog.vo.ApiArticleInfoVO">
+        <result column="id" jdbcType="BIGINT" property="id"/>
+        <result column="user_Id" jdbcType="VARCHAR" property="userId"/>
+        <result column="nickname" jdbcType="VARCHAR" property="username"/>
+        <result column="avatar" jdbcType="VARCHAR" property="avatar"/>
+        <result column="title" jdbcType="VARCHAR" property="title"/>
+        <result column="content" jdbcType="VARCHAR" property="content"/>
+        <result column="content_md" jdbcType="INTEGER" property="contentMd"/>
+        <result column="quantity" jdbcType="INTEGER" property="quantity"/>
+        <result column="create_time" jdbcType="DATE" property="createTime"/>
+        <result column="update_time" jdbcType="VARCHAR" property="updateTime"/>
+        <result column="title" jdbcType="VARCHAR" property="title"/>
+        <association property="category" javaType="com.bsdlzg.blog.entity.Category">
+            <id property="id" column="cid" jdbcType="BIGINT"></id>
+            <result property="name" column="cname" jdbcType="VARCHAR"></result>
+        </association>
+    </resultMap>
+
+
+    <select id="selectArticle" resultType="com.bsdlzg.blog.vo.SystemArticleListVO">
+        SELECT
+        a.*,
+        b.NAME AS categoryName,
+        group_concat( t.NAME SEPARATOR ',' ) AS tagNames
+        FROM
+        b_article a
+        JOIN b_category b ON a.category_id = b.id
+        JOIN b_article_tag atg ON a.id = atg.article_id
+        JOIN b_tags t ON atg.tag_id = t.id
+        <where>
+            <if test="param.userId != null and param.userId != ''">
+                a.user_id =#{param.userId}
+            </if>
+            <if test="param.title != null and param.title != ''">
+                a.title like concat('%',#{param.title},'%')
+            </if>
+            <if test="param.categoryId != null and param.categoryId != ''">
+                and a.category_id=#{param.categoryId}
+            </if>
+            <if test="param.isPublish != null and param.isPublish != ''">
+                and a.is_publish=#{param.isPublish}
+            </if>
+            <if test="param.tagId != null and param.tagId != ''">
+                and atg.tag_id=#{param.tagId}
+            </if>
+        </where>
+        GROUP BY a.id order by a.is_stick desc ,a.create_time desc
+    </select>
+
+    <select id="selectPrimaryKey" resultType="com.bsdlzg.blog.dto.ArticleDTO">
+        select a.id,
+               a.title,
+               a.avatar,
+               a.summary,
+               a.quantity,
+               a.content,
+               a.content_md,
+               a.is_secret,
+               a.is_stick,
+               a.is_publish,
+               a.is_original,
+               a.original_url,
+               a.remark,
+               a.create_time,
+               a.keywords,
+               b.name as categoryName,
+               a.is_carousel
+        from b_article a
+                 LEFT JOIN (SELECT id, name from b_category) b on a.category_id = b.id
+        where a.id = #{id}
+    </select>
+
+    <select id="contribute" resultType="com.bsdlzg.blog.vo.SystemArticleContributeVO">
+        select count, date
+        from
+            (SELECT
+            count(id) as 'count', DATE_FORMAT(create_time, '%Y-%m-%d') as date, create_time
+            FROM
+            `b_article`
+            where DATE_FORMAT(create_time, '%Y-%m-%d') between #{lastTime} and #{nowTime}
+            GROUP BY
+            `create_time`) AS blog
+        ORDER BY blog.create_time ASC
+    </select>
+
+    <update id="publishAndShelf">
+        update b_article
+        set is_publish=#{article.isPublish}
+        where id = #{article.id}
+    </update>
+
+    <update id="putTopArticle">
+        update b_article
+        set is_stick = #{article.isStick}
+        where id = #{article.id}
+    </update>
+    <select id="publicPageSearchArticle" resultType="com.bsdlzg.blog.vo.ApiArticleListVO">
+        select a.id,
+               a.title,
+               a.avatar,
+               a.summary,
+               a.quantity,
+               a.is_stick,
+               a.is_original,
+               ui.nickname as username,
+               ui.avatar as userAvatar,
+               a.create_time
+        from b_article a
+                 left join b_user b on a.user_id = b.id
+                 left join b_user_info ui on ui.id = b.user_info_id
+                 left join b_category c on a.category_id = c.id
+        where a.title like concat('%', #{keywords}, '%') and a.is_publish = 1 order by a.create_time desc
+    </select>
+
+    <select id="selectArticleList" resultType="com.bsdlzg.blog.vo.ApiArticleListVO">
+        select a.id, a.title, a.avatar,a.summary,a.quantity,a.is_stick,a.is_original,
+               ui.nickname as username,
+               ui.nickname,
+               ui.avatar as userAvatar,
+               a.create_time
+        from b_article a
+        left join b_user b on a.user_id = b.id
+        left join b_user_info ui on ui.id = b.user_info_id
+        left join b_category c on a.category_id = c.id
+        where a.is_publish = 1
+        <if test="categoryId != null">
+           and a.category_id = #{categoryId}
+        </if>
+        <if test="tagId != null">
+            and a.id in (select article_id from b_article_tag where tag_id =#{tagId})
+        </if>
+        order by a.is_stick desc, a.create_time desc
+    </select>
+
+    <select id="selectListArchive" resultType="com.bsdlzg.blog.vo.ApiArchiveVO">
+        select id,
+               title,
+               DATE_FORMAT(create_time, '%Y-%c') as 'time', create_time as formatTime
+        from b_article
+        order by create_time desc
+    </select>
+    <select id="selectArticleByIdToVO" resultMap="selectArticleByIdToVOMap">
+        select a.id,
+               a.user_id,
+               ui.nickname,
+               ui.avatar,
+               a.title,
+               a.content,
+               a.content_md,
+               a.quantity,
+               a.create_time,
+               a.update_time,
+               c.id   as cid,
+               c.name as cname
+        from b_article a
+                 left join b_category c on a.category_id = c.id
+                 left join b_user b on a.user_id = b.id
+                 left join b_user_info ui on ui.id = b.user_info_id
+        where a.id = #{id}
+    </select>
+    <select id="selectListByBanner" resultType="com.bsdlzg.blog.vo.SystemArticleListVO">
+        select id, title, avatar
+        from b_article
+        where is_carousel = 1 and is_publish = 1
+        order by is_stick desc ,create_time desc
+    </select>
+    <select id="selectUpToDateArticle" resultType="com.bsdlzg.blog.vo.ApiArticleListVO">
+        select *
+        from b_article where is_publish = 1
+        order by create_time desc limit 3
+    </select>
+    <select id="selectHotArticleList" resultType="com.bsdlzg.blog.vo.ApiArticleListVO">
+        select id, title
+        from b_article where is_publish = 1
+        order by quantity desc limit 5
+    </select>
+    <select id="publicSelectMyArticle" resultType="com.bsdlzg.blog.vo.ApiArticleListVO">
+        SELECT
+        a.*,
+        b.NAME AS categoryName
+        FROM
+        b_article a
+        JOIN b_category b ON a.category_id = b.id
+        where a.user_id =#{userId}
+        order by a.create_time desc
+    </select>
+    <select id="publicSelectMyArticleInfo" resultType="com.bsdlzg.blog.dto.ArticleInsertDTO">
+        SELECT
+            *
+        FROM
+            b_article
+        where id = #{id}
+    </select>
+</mapper>

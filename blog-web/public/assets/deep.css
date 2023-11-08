@@ -1,0 +1,34 @@
+:root {
+    --theme-color: #9999FF;
+    --background-color: #232323;
+    --body-color: #2b2b2b;
+    --text-color: #909399;
+    --site-color: #fff;
+    --site-text-color: #000;
+    --border-line: #414243;
+    --header-back-color: rgb(15, 15, 15);
+    --header-text-color: #999;
+    --article-color: rgb(153, 153, 153);
+    --box-title_color: #BDBDBD;
+    --text-color: #888888;
+    --notice-background: #303030;
+    --search-input-background-color: #414243;
+    --pagination-next-prev: #fff;
+    --author-color: #232323;
+    --article-tips-color: #2b2715;
+    --article-tips-border: #6f553b;
+    --article-content-color: #999;
+    --article-copyr--color: #303030;
+    --comment-backgroud-color: #2e2e2e;
+    --comment-emoji-color: #fff;
+    --comment-box: #303030;
+    --baise: #fff;
+    --category-backgorud-color: #303030;
+    --category-text-color: #777;
+    --archives-backgroud-color: #303030;
+    --footer-back-color: #232323;
+    --im-user-box-backgroudColor: #FF80AB;
+    --im-box-backgroudColor: #9CCC65;
+    --im-backgroudColor: #323644;
+    --im-text-color: #fff;
+}

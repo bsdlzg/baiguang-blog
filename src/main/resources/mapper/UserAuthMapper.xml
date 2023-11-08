@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bsdlzg.blog.mapper.UserInfoMapper">
+
+
+    <delete id="deleteByUserIds" >
+      delete from b_user_info where id in (
+          select user_info_id from b_user where id in
+        <foreach collection="ids" item="userId" open="(" separator=","  close=")" >
+            #{userId}
+        </foreach>)
+    </delete>
+
+    <select id="getByUserId" resultType="com.bsdlzg.blog.entity.UserInfo">
+        select id,nickname,email,avatar,web_site,intro from b_user_info where id=(select user_info_id from b_user where id=#{loginId})
+    </select>
+
+</mapper>

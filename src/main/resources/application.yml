@@ -1,0 +1,13 @@
+server:
+  servlet:
+    # 应用的访问路径
+    context-path: /baiguang
+spring:
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+  application:
+    name: shiyiblog
+  profiles:
+    active: prod
