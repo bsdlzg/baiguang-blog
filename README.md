@@ -2,7 +2,7 @@
 
 <p align=center>
   <a href="http://www.bsdlzg.cn">
-    <img src="https://bsdlzg.com/upload/2023/10/106_164.png" alt="白光博客" style="border-radius: 50%">
+    <img src="https://github.com/bsdlzg/baiguang-blog/blob/master/blog-web/src/assets/logo.png?raw=true" alt="白光博客" style="border-radius: 50%">
   </a>
 </p>
 
